@@ -4,12 +4,13 @@
 int main() {
 	SetTraceLogLevel(LOG_WARNING);
 	InitWindow(800, 600, "Title");
+	SetExitKey(0);
 	Renderer r;
 	while(!WindowShouldClose()){
 		BeginDrawing();
 		ClearBackground(BLACK);
+		DrawRectangle(0, 0, GetScreenWidth(), 20, DARKGRAY);
 
-		DrawFPS(20, 20);
 		r.Update();
 		r.Render();
 

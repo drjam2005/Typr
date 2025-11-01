@@ -1,7 +1,6 @@
 #include <renderer.h>
 #include <objects.h>
-#include <cmath>
-#include <iostream>
+#include <stdlib.h>
 #include <raylib.h>
 
 
@@ -15,39 +14,138 @@ Renderer::Renderer() {
 }
 
 
-void Renderer::Render(){
-	std::cout << text.count << std::endl;
-	for (int line = 0; line < text.count; ++line){
-		Line* currLine = &text.lines[line];
-		for (int chr = 0; chr < currLine->length; ++chr){
-			char str[] = {currLine->text[chr], '\0'};
-			DrawText(str, 20+(chr*15), 20+(line*20), 20, WHITE);
+void Renderer::Render() {
+    for (int line = 0; line < text.count; ++line) {
+        Line* currLine = &text.lines[line];
+        for (int chr = 0; chr < currLine->length; ++chr) {
+            char str[] = { currLine->text[chr], '\0' };
+
+            int posX = 30 + (chr * 15);
+            int posY = 30 + (line * 20);
+
+			Color charColor = WHITE;
+            if (index.x == chr && index.y == line) {
+				charColor = BLACK;
+                DrawRectangle(posX - 2, posY - 2, 15, 20, BLUE);
+            }
+
+            DrawText(str, posX, posY, 20, charColor);
+        }
+
+        if (index.x == currLine->length && index.y == line) {
+            int posX = 30 + (currLine->length * 15);
+            int posY = 30 + (line * 20);
+			Color highlight = GRAY;
+            DrawRectangle(posX - 2, posY - 2, 15, 20, highlight);
+        }
+    }
+}
+
+
+
+void Renderer::Update() {
+	if(mode == VISUAL){
+		ParseVisual();
+	}else if (mode == INSERT){
+		int key = GetCharPressed();
+		if (key >= 32 && key <= 126) {
+			text.AddChar(index.y, index.x, (char)key);
+			index.x++;
+		}
+
+		key = GetKeyPressed();
+		if (key == KEY_TAB){
+			text.AddChar(index.y, index.x, ' ');
+			index.x++;
+			text.AddChar(index.y, index.x,' ');
+			index.x++;
+			text.AddChar(index.y, index.x,' ');
+			index.x++;
+			text.AddChar(index.y, index.x,' ');
+			index.x++;
+			return;
+		}
+		if (key == KEY_ESCAPE){
+			if(index.x)
+				index.x--;
+			mode = VISUAL;
+			return;
+		}
+		if (key == KEY_BACKSPACE) {
+			if (index.x > 0) {
+				text.RemoveChar(index.y, index.x - 1);
+				index.x--;
+			} else if (index.y > 0) {
+				int prevLen = text.lines[(int)index.y - 1].length;
+				text.MergeLines(index.y - 1, index.y);
+				index.y--;
+				index.x = prevLen;
+			}
+		}
+
+		if (key == KEY_ENTER) {
+			text.SplitLine(index.y, index.x);
+			index.y++;
+			index.x = 0;
 		}
 	}
 	return;
 }
 
-void Renderer::Update(){
-	MoveCursor();
-	int key = GetCharPressed();
-    if (key >= 32 && key <= 126) { 
-        text.AddChar(text.count-1, text.lines[text.count-1].length, (char)key);
-    }
-	key = GetKeyPressed();
-	if (key == KEY_BACKSPACE){
-		if (text.lines[text.count-1].length > 0) {
-            text.RemoveChar(text.count-1, text.lines[text.count-1].length - 1);
-        } else if (text.count-1 > 0) {
-            text.count--;
-        }
+
+void Renderer::ParseVisual(){
+	int key = GetKeyPressed();
+	if(key == KEY_I){
+		mode = INSERT;
+	}
+	if(key == KEY_A){
+		mode = INSERT;
+		if(index.x)
+			index.x++;
+	}
+	if(key == KEY_O){
+		mode = INSERT;
+		if(IsKeyDown(KEY_LEFT_SHIFT)){
+			if(!(index.y))
+				return;
+			text.SplitLine(--index.y, text.lines[(int)index.y+1].length);
+			index.x = 0; index.y++;
+		}else{
+			text.SplitLine(index.y, text.lines[(int)index.y].length);
+			index.x = 0; index.y++;
+		}
+	}
+	if(key == KEY_X){
+		text.RemoveChar(index.y, index.x);
+		if(index.x == text.lines[(int)index.y].length)
+			index.x--;
 	}
 
-	if (key == KEY_ENTER){
-        text.NewLine();
+	if(key == KEY_H){
+		if(index.x)
+			index.x--;
 	}
-	
-	return;
-}
-
-void Renderer::MoveCursor(){
+	if(key == KEY_L){
+		if(index.x < text.lines[(int)index.y].length-1)
+			index.x++;
+	}
+	if(key == KEY_J){
+		if(index.y+1 < text.count){
+			index.y++;
+		}
+		int comp = text.lines[(int)index.y].length-1;
+		if(index.x > comp)
+			index.x = comp;
+		if(comp+1 == 0)
+			index.x = 0;
+	}
+	if(key == KEY_K){
+		if(index.y)
+			index.y--;
+		int comp = text.lines[(int)index.y].length-1;
+		if(index.x > comp)
+			index.x = comp;
+		if(comp+1 == 0)
+			index.x = 0;
+	}
 }
