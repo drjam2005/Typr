@@ -16,6 +16,8 @@ raylib_dep = declare_dependency(
 
 src = [
   'src/main.cpp',
+  'src/renderer.cpp',
+  'src/objects.cpp',
 ]
 
 exe = executable(
