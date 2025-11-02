@@ -15,6 +15,7 @@ raylib_dep = declare_dependency(
 )
 
 src = [
+  'src/app.cpp',
   'src/main.cpp',
   'src/renderer.cpp',
   'src/objects.cpp',

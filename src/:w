@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <raylib.h>
 
+
 Renderer::Renderer() {
     text.count = 1;
     text.lines = (Line*)malloc(sizeof(Line));
@@ -25,7 +26,9 @@ void Renderer::Render() {
             int posY = 50 + (line * 20);
 
 			Color charColor = WHITE;
-            if (index.x == chr && index.y == line) {
+            if ((index.x == chr && index.y == line) ||
+			    (mode == VISUAL_LINE && index.y < visualStart.y)
+				) {
 				charColor = BLACK;
                 DrawRectangle(posX - 2, posY - 2, 15, 20, BLUE);
             }
@@ -173,9 +176,9 @@ void Renderer::ParseNormal(){
 }
 
 void Renderer::ParseVisual(){
-	return;
 }
 
 void Renderer::ParseVisualLine(){
-	return;
+	ParseNormal();
+	visualEnd = index;
 }
