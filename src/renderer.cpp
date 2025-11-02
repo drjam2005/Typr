@@ -1,4 +1,5 @@
 #include <renderer.h>
+#include <cmath>
 #include <objects.h>
 #include <stdlib.h>
 #include <raylib.h>
@@ -14,20 +15,32 @@ Renderer::Renderer() {
 
 
 void Renderer::Render() {
-	DrawRectangle(0, 0, GetScreenWidth(), 35, GRAY);
-	DrawRectangle(0, 30, GetScreenWidth(), 5, DARKGRAY);
+    DrawRectangle(0, 0, GetScreenWidth(), 35, GRAY);
+    DrawRectangle(0, 30, GetScreenWidth(), 5, DARKGRAY);
+
     for (int line = 0; line < text.count; ++line) {
         Line* currLine = &text.lines[line];
+        int posY = 50 + (line * 20);
+
+        bool inVisualLine = false;
+        if (mode == VISUAL_LINE) {
+            int top = fmin(visualStart.y, visualEnd.y);
+            int bottom = fmax(visualStart.y, visualEnd.y);
+            inVisualLine = (line >= top && line <= bottom);
+        }
+
+        if (inVisualLine) {
+            DrawRectangle(28, posY - 2, GetScreenWidth() - 56, 20, BLUE);
+        }
+
         for (int chr = 0; chr < currLine->length; ++chr) {
             char str[] = { currLine->text[chr], '\0' };
-
             int posX = 30 + (chr * 15);
-            int posY = 50 + (line * 20);
 
-			Color charColor = WHITE;
+            Color charColor = WHITE;
             if (index.x == chr && index.y == line) {
-				charColor = BLACK;
-                DrawRectangle(posX - 2, posY - 2, 15, 20, BLUE);
+                DrawRectangle(posX - 2, posY - 2, 15, 20, SKYBLUE);
+                charColor = BLACK;
             }
 
             DrawText(str, posX, posY, 20, charColor);
@@ -35,14 +48,10 @@ void Renderer::Render() {
 
         if (index.x == currLine->length && index.y == line) {
             int posX = 30 + (currLine->length * 15);
-            int posY = 50 + (line * 20);
-			Color highlight = GRAY;
-            DrawRectangle(posX - 2, posY - 2, 15, 20, highlight);
+            DrawRectangle(posX - 2, posY - 2, 15, 20, GRAY);
         }
     }
 }
-
-
 
 void Renderer::Update() {
 	switch(mode){
@@ -97,6 +106,23 @@ void Renderer::ParseInsert(){
 			text.MergeLines(index.y - 1, index.y);
 			index.y--;
 			index.x = prevLen;
+		}
+	}
+	if (key == KEY_W){
+		if(IsKeyDown(KEY_LEFT_CONTROL) || IsKeyDown(KEY_RIGHT_CONTROL)){
+			while (index.x > 0) {
+				index.x--;
+				char c = text.lines[(int)index.y].text[(int)index.x];
+				text.RemoveChar(index.y, index.x);
+
+				if (c == ' ' || c == '.' || c == ';') {
+					break;
+				}
+
+				if (index.x == 0) {
+					break;
+				}
+			}
 		}
 	}
 
@@ -157,6 +183,9 @@ void Renderer::ParseNormal(){
 		mode = INSERT;
 		if(index.x)
 			index.x++;
+		if(IsKeyDown(KEY_LEFT_SHIFT)){
+			index.x = text.lines[(int)index.y].length;
+		}
 	}
 	if(key == KEY_O){
 		mode = INSERT;
@@ -173,9 +202,26 @@ void Renderer::ParseNormal(){
 }
 
 void Renderer::ParseVisual(){
+	if(IsKeyPressed(KEY_ESCAPE))
+		mode = NORMAL;
 	return;
 }
 
 void Renderer::ParseVisualLine(){
+	ParseNormal();
+	visualEnd = index;
+	if(IsKeyPressed(KEY_ESCAPE))
+		mode = NORMAL;
+	if(IsKeyPressed(KEY_D)){
+		text.RemoveLines(fmin(visualStart.y, visualEnd.y), fabs(visualEnd.y - visualStart.y)+1);
+		mode = NORMAL;
+		if (text.count == 0) {
+            text.NewLine();
+            index = {0, 0};
+        } else {
+            index.y = fmin(visualStart.y, visualEnd.y)-1;
+            index.x = fmin(index.x, text.lines[(int)index.y].length);
+        }
+	}
 	return;
 }

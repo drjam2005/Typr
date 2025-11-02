@@ -11,6 +11,7 @@ struct Text {
 	int count = 0;
 
 	void NewLine();
+	void RemoveLines(int index, int lineCount);
 	void MergeLines(int index1, int index2);
 	void SplitLine(int index1, int index2);
 	void AddChar(int lineIndex, int charIndex, char chr);

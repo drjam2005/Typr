@@ -111,3 +111,39 @@ void Text::SplitLine(int yIndex, int xIndex) {
     lines[yIndex + 1] = newLine;
     count++;
 }
+
+void Text::RemoveLines(int index, int lineCount) {
+    if (count == 0 || lineCount <= 0) return;
+
+    if (index < 0) index = 0;
+    if (index >= count) return;
+    if (index + lineCount > count) {
+        lineCount = count - index;
+    }
+
+    for (int i = 0; i < lineCount; ++i) {
+        int removeIndex = index + i;
+        free(lines[removeIndex].text);
+        lines[removeIndex].text = nullptr;
+        lines[removeIndex].length = 0;
+    }
+
+    int remaining = count - (index + lineCount);
+    if (remaining > 0) {
+        memmove(
+            &lines[index],
+            &lines[index + lineCount],
+            sizeof(Line) * remaining
+        );
+    }
+
+    count -= lineCount;
+
+    if (count > 0) {
+        lines = (Line*)realloc(lines, sizeof(Line) * count);
+    } else {
+        free(lines);
+        lines = nullptr;
+    }
+}
+
