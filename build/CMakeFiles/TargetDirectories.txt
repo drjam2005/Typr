@@ -1,3 +1,0 @@
-/home/james/Projects/Typr/build/CMakeFiles/Typr.dir
-/home/james/Projects/Typr/build/CMakeFiles/edit_cache.dir
-/home/james/Projects/Typr/build/CMakeFiles/rebuild_cache.dir
