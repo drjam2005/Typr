@@ -100,6 +100,7 @@ public:
 		size_t yPos = 20;
 		for(auto& word : wordList.get_words()){
 			int x = 20;
+			DrawRectangle(x + (15*word.index), yPos, 20, 20, DARKGRAY);
 			for(size_t i = 0; i < word.word_len; i++){
 				char str[2] = {word.word[i], '\0'};
 				DrawTextEx(font, str, (Vector2){(float)x, (float)yPos}, 20, 5, GRAY);
