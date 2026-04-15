@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/home/james/Projects/Typr/build",
+  "command": "/usr/bin/c++  -I/home/james/Projects/Typr/include -isystem /home/james/Projects/Typr/vendor/raylib/unix/include  -o CMakeFiles/Typr.dir/src/main.cpp.o -c /home/james/Projects/Typr/src/main.cpp",
+  "file": "/home/james/Projects/Typr/src/main.cpp",
+  "output": "CMakeFiles/Typr.dir/src/main.cpp.o"
+}
+]

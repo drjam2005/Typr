@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Typr.dir/src/main.cpp.o -o Typr   -L/home/james/Projects/Typr/vendor/raylib/unix/lib  -Wl,-rpath,/home/james/Projects/Typr/vendor/raylib/unix/lib -lraylib 
