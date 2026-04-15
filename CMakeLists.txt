@@ -28,4 +28,23 @@ if(UNIX)
 	target_link_libraries(${exec} PUBLIC
 		raylib
 	)
+elseif(WIN32)
+	target_include_directories(${exec} SYSTEM PUBLIC
+		${CMAKE_SOURCE_DIR}/vendor/raylib/windows/include
+	)
+	target_link_directories(${exec} PUBLIC
+		${CMAKE_SOURCE_DIR}/vendor/raylib/windows/lib
+	)
+	if(RELEASE)
+		target_link_options(${exec} PRIVATE "-mwindows")
+		target_compile_options(${exec} PRIVATE
+			-fpermissive
+			-O3
+		)
+	endif()
+	target_link_libraries(${exec} PUBLIC
+		raylib
+		gdi32
+		winmm
+	)
 endif()
