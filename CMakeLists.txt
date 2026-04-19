@@ -5,6 +5,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(exec Typr)
 set(src
 	src/main.cpp
+	src/objects.cpp
+	src/events.cpp
+	src/updater.cpp
+	src/renderer.cpp
+	src/game.cpp
 )
 
 add_executable(${exec} ${src})
