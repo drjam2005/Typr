@@ -7,7 +7,10 @@
 #include <string.h>
 #include <font.h>
 
-#define WORD_SIZE 256
+#define WIDTH (800)
+#define HEIGHT (600)
+#define WORD_SIZE (256)
+
 // testing phase
 struct Word {
 	size_t index = 0;
@@ -125,52 +128,62 @@ public:
 struct RendererConfig {
 	Rectangle renderer_dimensions;
 	size_t font_size;
+	size_t font_spacing;
+	size_t word_spacing;
 	char* font_name;
+};
+
+const RendererConfig defaultConfig = {
+	.renderer_dimensions = {0, 0, WIDTH, HEIGHT},
+	.font_size = 30,
+	.font_spacing = 20, // doesn't really work yet
+	.word_spacing = 15,
+	.font_name = (char*)"test"
 };
 
 class Renderer {
 	WordList& wordList;
 	EventBus& eventBus;
-	RendererConfig config;
+	RendererConfig config = defaultConfig;
 	Font font = GetFontDefault();
 private:
-	Vector2 _render_text(Word& word, Vector2 pos, bool isCurrent=false){
+	Vector2 _render_word(Word& word, Vector2 pos, bool isCurrent=false){
 		int x = pos.x, y = pos.y;
 
 		size_t wordWidth = 0, height = 0, guessWidth = 0;
+		Vector2 charDims = MeasureTextEx(font, "a", config.font_size, config.font_spacing);
 		if(isCurrent)
-			DrawRectangle(x + (15*word.index), y, 20, 20, DARKGRAY);
+			DrawRectangle(x + (charDims.x*word.index), y, charDims.x, charDims.y, DARKGRAY);
 
 		for(size_t i = 0; i < word.word_len; i++){
-			char str[2] = {word.word[i], '\0'};
-			DrawTextEx(font, str, (Vector2){(float)x, (float)y}, 20, 5, GRAY);
-			x += 15;
-			wordWidth += 15;
+			char str[2] = {word.get_word_char_at(i), '\0'};
+			DrawTextEx(font, str, (Vector2){(float)x, (float)y}, config.font_size, config.font_spacing, GRAY);
+			x += MeasureTextEx(font, str, config.font_size, config.font_spacing).x;
+			wordWidth += MeasureTextEx(font, str, config.font_size, config.font_spacing).x;
 		}
 		x = pos.x;
 		for(size_t i = 0; i < word.index; i++){
 			char str[2] = {word.guess[i], '\0'};
-			if(word.guess[i] == word.word[i])
-				DrawTextEx(font, str, (Vector2){(float)x, (float)y}, 20, 5, WHITE);
+			if(word.get_guess_char_at(i) == word.get_word_char_at(i))
+				DrawTextEx(font, str, (Vector2){(float)x, (float)y}, config.font_size, config.font_spacing, WHITE);
 			else{
 				if(i < word.word_len)
-					str[0] = word.word[i];
-				DrawTextEx(font, str, (Vector2){(float)x, (float)y}, 20, 5, RED);
+					str[0] = word.get_word_char_at(i);
+				DrawTextEx(font, str, (Vector2){(float)x, (float)y}, config.font_size, config.font_spacing, RED);
 			}
-			x += 15;
-			guessWidth += 15;
+			x += MeasureTextEx(font, str, config.font_size, config.font_spacing).x;
+			guessWidth += MeasureTextEx(font, str, config.font_size, config.font_spacing).x;
 		}
 
 		return Vector2 {
 			(float)std::max(wordWidth, guessWidth),
-			MeasureTextEx(font, "a", 20, 5).y
+			charDims.y
 		};
 	}
 public:
 	Renderer(WordList& wordList, EventBus& eventBus) : wordList(wordList), eventBus(eventBus) {
 		font = LoadFontFromMemory(".ttf", RobotoMonoNerdFont_SemiBold_ttf, RobotoMonoNerdFont_SemiBold_ttf_len, 32, 0, 0);
 	}
-
 	void Loop(){
 		// word rendering
 		size_t yPos = 20;
@@ -184,9 +197,8 @@ public:
 		}
 
 		for(auto& word : wordList.get_words()){
-			x += _render_text(word, (Vector2){(float)x, (float)yPos}, (currentIndex == index)).x;
-			x += 10; // space width or something
-
+			x += _render_word(word, (Vector2){(float)x, (float)yPos}, (currentIndex == index)).x;
+			x += config.word_spacing;
 			++index;
 		}
 	}
@@ -219,16 +231,20 @@ public:
 };
 
 int main(){
-	InitWindow(800, 600, "Typr");
+	InitWindow(WIDTH, HEIGHT, "Typr");
 	SetTargetFPS(60);
 
 	WordList words;
 	{
-		words.add_word("word1");
-		words.add_word("word2");
-		words.add_word("word3");
-		words.add_word("word4");
-		words.add_word("word5");
+		words.add_word("the");
+		words.add_word("quick");
+		words.add_word("brown");
+		words.add_word("fox");
+		words.add_word("jumps");
+		words.add_word("over");
+		words.add_word("the");
+		words.add_word("lazy");
+		words.add_word("dog");
 	}
 
 	Game game(words);
