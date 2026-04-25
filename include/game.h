@@ -9,10 +9,11 @@
 class Game {
 	Updater updater;
 	Renderer renderer;
+	std::vector<Word> words;
 	WordList wordList;
 	EventBus eventBus;
 public:
-	Game(WordList wordList);
+	Game(WordList& wordList);
 	void Loop();
 };
 

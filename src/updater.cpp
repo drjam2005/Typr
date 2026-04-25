@@ -1,6 +1,7 @@
 #include <updater.h>
 
 Updater::Updater(WordList& wordList, EventBus& eventBus) : wordList(wordList), eventBus(eventBus) { }
+
 void Updater::Loop(){
 	Event thisEvent = {
 		.type = EVENT_INDEX_INFO,

@@ -13,6 +13,7 @@ struct Event {
 	union{
 		char press_key;
 		size_t index_info;
+		float words_max;
 	} data;
 };
 

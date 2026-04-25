@@ -15,6 +15,7 @@ set(src
 add_executable(${exec} ${src})
 target_include_directories(${exec} PRIVATE
 	${CMAKE_SOURCE_DIR}/include
+	${CMAKE_SOURCE_DIR}/vendor/nlohmann-json/include
 )
 
 if(UNIX)
