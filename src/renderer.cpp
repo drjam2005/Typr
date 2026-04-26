@@ -1,7 +1,6 @@
 #include <renderer.h>
 #include <raymath.h>
 #include <cmath>
-#include <iostream>
 
 Renderer::Renderer(WordList& wordList, EventBus& eventBus) : wordList(wordList), eventBus(eventBus) {
 	font = LoadFontFromMemory(".ttf", RobotoMonoNerdFont_SemiBold_ttf, RobotoMonoNerdFont_SemiBold_ttf_len, 64, 0, 0);
