@@ -14,6 +14,7 @@ struct Word {
 	Word(const char* text);
 	char get_word_char_at(size_t index);
 	char get_guess_char_at(size_t index);
+	bool is_correct();
 	void update();
 };
 
@@ -25,6 +26,7 @@ public:
 	void set_words(std::vector<Word> words);
 	void add_word(const char* text);
 	void add_words(std::vector<Word> givenWords);
+	size_t get_correct_words();
 
 	std::vector<Word>& get_words();
 };

@@ -1,7 +1,10 @@
+#include "events.h"
+#include <cmath>
 #include <game.h>
 #include <fstream>
 #include <cstdlib>
 #include <nlohmann/json.hpp>
+#include <raylib.h>
 
 static std::vector<std::string> englishWords; // loaded once, sampled from
 
@@ -22,6 +25,15 @@ Game::Game(WordList& wordList) :
 
 void Game::Loop() {
 
+	float dt = GetFrameTime();
+	if(started)
+		elapsedTime += dt;
+	DrawTextEx(renderer.get_font(), TextFormat("%.0f wpm", elapsedTime ? (wordList.get_correct_words()/elapsedTime)*60 : 0.0f), 
+			(Vector2){
+				renderer.get_working_config().renderer_dimensions.x,
+				renderer.get_working_config().renderer_dimensions.y-renderer._measure_word(Word(" ")).y
+			}, 
+			renderer.get_working_config().font_size, renderer.get_working_config().font_spacing, GRAY);
     for(auto& event : eventBus.get_events()){
         if(event.type == EVENT_NEED_WORDS){
             RendererConfig config = renderer.get_working_config();
@@ -43,6 +55,8 @@ void Game::Loop() {
 
             renderer.pendingRequest = false;
         }
+		if(event.type == EVENT_START)
+			started = true;
     }
     eventBus.clear_events();
 

@@ -24,6 +24,10 @@ void Word::update(){
 		guess[index--] = 0;
 }
 
+bool Word::is_correct(){
+	return !strcmp(word, guess);
+}
+
 void WordList::clear_words(){
 	words.clear();
 }
@@ -42,4 +46,12 @@ void WordList::add_words(std::vector<Word> givenWords){
 
 std::vector<Word>& WordList::get_words(){
 	return words;
+}
+size_t WordList::get_correct_words(){
+	size_t corrects = 0;
+	for(auto word : words){
+		corrects += word.is_correct();
+	}
+
+	return corrects;
 }

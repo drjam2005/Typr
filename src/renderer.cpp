@@ -162,3 +162,7 @@ void Renderer::_render_word(Word& word, Vector2 pos, bool isCurrent=false){
 RendererConfig& Renderer::get_working_config(){
 	return config;
 }
+
+Font Renderer::get_font(){
+	return this->font;
+}

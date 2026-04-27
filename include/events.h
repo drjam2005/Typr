@@ -3,6 +3,7 @@
 #include <deque>
 
 enum EVENT_TYPE {
+	EVENT_START,
 	EVENT_PRESS,
 	EVENT_INDEX_INFO,
 	EVENT_NEED_WORDS

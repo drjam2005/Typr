@@ -11,9 +11,17 @@ void Updater::Loop(){
 	};
 	eventBus.push_event(thisEvent);
 	if(IsKeyPressed(KEY_SPACE)){
+		if(!started){
+			eventBus.push_event((Event){.type = EVENT_START});
+			started = true;
+		}
 		currentWord = std::min(wordList.get_words().size() - 1, currentWord + 1);
 	}
 	if(IsKeyPressed(KEY_BACKSPACE) && !wordList.get_words()[currentWord].index){
+		if(!started){
+			eventBus.push_event((Event){.type = EVENT_START});
+			started = true;
+		}
 		--currentWord;
 	}
 

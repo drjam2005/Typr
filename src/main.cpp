@@ -2,13 +2,10 @@
 #include <game.h>
 
 int main(){
+	SetConfigFlags(FLAG_VSYNC_HINT);
 	InitWindow(WIDTH, HEIGHT, "Typr");
-	//SetTargetFPS(60);
 
 	WordList words;
-//	{
-//		words.add_word("test");
-//	}
 	Game game(words);
 
 	while(!WindowShouldClose()){
@@ -16,7 +13,6 @@ int main(){
 		ClearBackground(BLACK);
 
 		game.Loop();
-		DrawFPS(20, 20);
 
 		EndDrawing();
 	}

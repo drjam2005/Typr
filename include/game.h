@@ -12,6 +12,9 @@ class Game {
 	std::vector<Word> words;
 	WordList wordList;
 	EventBus eventBus;
+	float currentWPM = 0;
+	bool started = false;
+	float elapsedTime = 0.0f;
 public:
 	Game(WordList& wordList);
 	void Loop();

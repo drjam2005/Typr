@@ -38,6 +38,7 @@ public:
 	Vector2 _measure_word(Word word);
 	bool pendingRequest = false;
 	void Loop();
+	Font get_font();
 private:
 	int draggingCorner = -1;
     int currentRow = 0;
