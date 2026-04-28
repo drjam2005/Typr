@@ -28,7 +28,8 @@ void Game::Loop() {
 	float dt = GetFrameTime();
 	if(started)
 		elapsedTime += dt;
-	DrawTextEx(renderer.get_font(), TextFormat("%.0f wpm", elapsedTime ? (wordList.get_correct_words()/elapsedTime)*60 : 0.0f), 
+
+	DrawTextEx(renderer.get_font(), TextFormat("%.0f wpm", elapsedTime ? (wordList.get_correct_words()/std::ceil(elapsedTime))*60 : 0.0f), 
 			(Vector2){
 				renderer.get_working_config().renderer_dimensions.x,
 				renderer.get_working_config().renderer_dimensions.y-renderer._measure_word(Word(" ")).y
