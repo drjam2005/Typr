@@ -15,14 +15,14 @@ void Updater::Loop(){
 			eventBus.push_event((Event){.type = EVENT_START});
 			started = true;
 		}
-		currentWord = std::min(wordList.get_words().size() - 1, currentWord + 1);
+		currentWord = std::min((int)wordList.get_words().size() - 1, currentWord + 1);
 	}
 	if(IsKeyPressed(KEY_BACKSPACE) && !wordList.get_words()[currentWord].index){
 		if(!started){
 			eventBus.push_event((Event){.type = EVENT_START});
 			started = true;
 		}
-		--currentWord;
+		currentWord = std::max(0, currentWord-1);
 	}
 
 	wordList.get_words()[currentWord].update();

@@ -8,7 +8,7 @@
 class Updater {
 	WordList& wordList;
 	EventBus& eventBus;
-	size_t currentWord = 0;
+	int currentWord = 0;
 	bool started = false;
 public:
 	Updater(WordList& wordList, EventBus& eventBus);
